@@ -46,7 +46,13 @@ where
             for (local, qualifiers) in
                 itertools::izip!(body.local_decls.indices(), fn_results.results())
             {
-                if let Some(var_name) = user_idents.get(&local) {
+                if local.index() == 0 {
+                    // _0 is the return place in MIR — no entry in var_debug_info,
+                    // so emit it under a reserved key that cannot clash with Rust identifiers.
+                    if !qualifiers.is_empty() {
+                        data.insert("@return".to_owned(), SmallVec::from_slice(qualifiers));
+                    }
+                } else if let Some(var_name) = user_idents.get(&local) {
                     data.insert(
                         var_name.as_str().to_owned(),
                         SmallVec::from_slice(qualifiers),
