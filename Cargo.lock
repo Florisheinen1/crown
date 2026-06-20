@@ -55,6 +55,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
+name = "array-analysis"
+version = "0.1.0"
+dependencies = [
+ "analysis",
+ "common",
+ "serde",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -278,6 +287,7 @@ dependencies = [
  "alias",
  "analysis",
  "anyhow",
+ "array-analysis",
  "c2rust-bitfields",
  "c2rust-bitfields-derive",
  "clap",

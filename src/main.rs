@@ -374,6 +374,10 @@ fn run(cmd: Command, tcx: TyCtxt<'_>) -> Result<()> {
                         &ownership_result,
                     ))?;
                 fs::write(results_path.join("statistics.json"), statistics)?;
+                let array_stats = serde_json::to_string(
+                    &array_analysis::ArrayStats::new(&input, &fatness_result, &ownership_result),
+                )?;
+                fs::write(results_path.join("array_stats.json"), array_stats)?;
             }
         }
         Command::Rewrite {

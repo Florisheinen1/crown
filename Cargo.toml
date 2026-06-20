@@ -7,6 +7,7 @@ members = [
     "crates/empirical-study",
     "crates/refactor",
     "crates/rustc-properties",
+    "crates/array-analysis",
 ]
 
 [package]
@@ -26,6 +27,7 @@ alias = { path = "crates/alias" }
 refactor = { path = "crates/refactor" }
 rustc-properties = { path = "crates/rustc-properties" }
 empirical-study = { path = "crates/empirical-study" }
+array-analysis = { path = "crates/array-analysis" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1"
 clap = { version = "=4.1.14", features = ["derive"] }
