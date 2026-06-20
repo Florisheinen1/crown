@@ -1,17 +1,66 @@
+use std::collections::HashMap;
+
 use alias::AliasResult;
 use rustc_hash::{FxHashMap, FxHashSet};
 use rustc_hir::def_id::DefId;
 use rustc_index::vec::Idx;
 use rustc_middle::{
-    mir::{Body, Local, TerminatorKind},
+    mir::{Body, Local, TerminatorKind, VarDebugInfoContents},
     ty::TyCtxt,
 };
 use rustc_type_ir::TyKind::FnDef;
+use serde::Serialize;
 
 use super::flow_insensitive::mutability::{Mutability, MutabilityResult};
 use crate::call_graph::CallGraph;
 
 pub type OutputParams = FxHashMap<DefId, FxHashSet<Local>>;
+
+#[derive(Serialize)]
+pub struct OutputParamsData {
+    pub fn_data: HashMap<String, Vec<String>>,
+}
+
+pub fn make_output_params_data(
+    output_params: &OutputParams,
+    crate_data: &common::CrateData,
+) -> OutputParamsData {
+    let tcx = crate_data.tcx;
+    let mut fn_data = HashMap::with_capacity(crate_data.fns.len());
+
+    for &did in &crate_data.fns {
+        let def_path_str = tcx.def_path_str(did);
+        let body = tcx.optimized_mir(did);
+
+        let user_idents: HashMap<Local, _> = body
+            .var_debug_info
+            .iter()
+            .filter_map(|info| match info.value {
+                VarDebugInfoContents::Place(place) => {
+                    Some((place.as_local()?, info.name))
+                }
+                _ => None,
+            })
+            .collect();
+
+        let mut param_names: Vec<String> = output_params
+            .get(&did)
+            .map(|params| {
+                params
+                    .iter()
+                    .filter_map(|local| {
+                        user_idents.get(local).map(|name| name.as_str().to_owned())
+                    })
+                    .collect()
+            })
+            .unwrap_or_default();
+        param_names.sort();
+
+        fn_data.insert(def_path_str, param_names);
+    }
+
+    OutputParamsData { fn_data }
+}
 
 pub fn show_output_params(
     crate_data: &common::CrateData,

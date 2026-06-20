@@ -363,9 +363,16 @@ fn run(cmd: Command, tcx: TyCtxt<'_>) -> Result<()> {
                 let fatness_data = serde_json::to_string(&fatness_result.make_data(&input))?;
                 let mutability_data = serde_json::to_string(&mutability_result.make_data(&input))?;
                 let ownership_data = serde_json::to_string(&ownership_result.make_data(&input))?;
+                let output_params_data = serde_json::to_string(
+                    &analysis::type_qualifier::output_params::make_output_params_data(
+                        &output_params,
+                        &input,
+                    ),
+                )?;
                 fs::write(results_path.join("fatness.json"), fatness_data)?;
                 fs::write(results_path.join("mutability.json"), mutability_data)?;
                 fs::write(results_path.join("ownership.json"), ownership_data)?;
+                fs::write(results_path.join("output_params.json"), output_params_data)?;
                 let statistics =
                     serde_json::to_string(&analysis::statistics::CrateStatistics::new(
                         &input,
@@ -413,9 +420,16 @@ fn run(cmd: Command, tcx: TyCtxt<'_>) -> Result<()> {
                 let fatness_data = serde_json::to_string(&fatness_result.make_data(&input))?;
                 let mutability_data = serde_json::to_string(&mutability_result.make_data(&input))?;
                 let ownership_data = serde_json::to_string(&ownership_result.make_data(&input))?;
+                let output_params_data = serde_json::to_string(
+                    &analysis::type_qualifier::output_params::make_output_params_data(
+                        &output_params,
+                        &input,
+                    ),
+                )?;
                 fs::write(results_path.join("fatness.json"), fatness_data)?;
                 fs::write(results_path.join("mutability.json"), mutability_data)?;
                 fs::write(results_path.join("ownership.json"), ownership_data)?;
+                fs::write(results_path.join("output_params.json"), output_params_data)?;
                 let statistics =
                     serde_json::to_string(&analysis::statistics::CrateStatistics::new(
                         &input,
