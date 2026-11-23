@@ -15,6 +15,9 @@ name = "crown"
 version = "0.0.1"
 edition = "2021"
 build = "build.rs"
+# build.rs recreates extra_deps/ on every run. Without this, cargo would see that as a change and
+# rebuild crown on every build whenever git does not filter it out (no .git: Docker, Zenodo).
+exclude = ["extra_deps"]
 
 [package.metadata.rust-analyzer]
 rustc_private = true
